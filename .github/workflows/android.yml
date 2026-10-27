@@ -1,24 +1,40 @@
 name: Build Android APK
+
 on:
   workflow_dispatch:
   push:
     paths:
       - '**'
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: barichello/godot-ci:4.3.0
     steps:
-      - name: Checkout source
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Prepare build directory
+
+      - name: Set up Godot
+        run: |
+          GODOT_VERSION=4.3.stable
+          wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
+          unzip Godot_v${GODOT_VERSION}_linux.x86_64.zip
+          mv Godot_v${GODOT_VERSION}_linux.x86_64 /usr/local/bin/godot
+
+          wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}
+          unzip Godot_v${GODOT_VERSION}_linux.x86_64.export_templates.tpz -d ~/.local/share/godot/export_templates/${GODOT_VERSION}
+          mv ~/.local/share/godot/export_templates/templates ~/.local/share/godot/export_templates/${GODOT_VERSION}
+
+      - name: Create build directory
         run: mkdir -p build
+
       - name: Import project resources
         run: godot --headless --editor --path . --quit
-      - name: Export debug APK
-        run: godot --headless --path . --export-debug Android build/ForestSurvival3D.apk
-      - name: Upload APK artifact
+
+      - name: Export Debug APK
+        run: godot --headless --path . --export-debug "Android" build/ForestSurvival3D.apk
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ForestSurvival3D-APK
