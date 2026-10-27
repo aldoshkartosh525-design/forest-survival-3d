@@ -15,15 +15,16 @@ jobs:
 
       - name: Set up Godot
         run: |
+          GODOT_TAG=4.3-stable
           GODOT_VERSION=4.3.stable
-          wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
-          unzip Godot_v${GODOT_VERSION}_linux.x86_64.zip
-          mv Godot_v${GODOT_VERSION}_linux.x86_64 /usr/local/bin/godot
+          wget https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/Godot_v${GODOT_TAG}_linux.x86_64.zip
+          unzip Godot_v${GODOT_TAG}_linux.x86_64.zip
+          sudo mv Godot_v${GODOT_TAG}_linux.x86_64 /usr/local/bin/godot
 
-          wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.export_templates.tpz
+          wget https://github.com/godotengine/godot/releases/download/${GODOT_TAG}/Godot_v${GODOT_TAG}_export_templates.tpz
+          unzip Godot_v${GODOT_TAG}_export_templates.tpz
           mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}
-          unzip Godot_v${GODOT_VERSION}_linux.x86_64.export_templates.tpz -d ~/.local/share/godot/export_templates/${GODOT_VERSION}
-          mv ~/.local/share/godot/export_templates/templates ~/.local/share/godot/export_templates/${GODOT_VERSION}
+          mv templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}/
 
       - name: Create build directory
         run: mkdir -p build
@@ -40,4 +41,4 @@ jobs:
           name: ForestSurvival3D-APK
           path: build/ForestSurvival3D.apk
           if-no-files-found: error
-
+          
